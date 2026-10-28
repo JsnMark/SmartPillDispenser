@@ -1,0 +1,12 @@
+{
+  "folders": [
+    { "path": "." , "name": "SmartPillDispenser" },
+    { "path": "firmware", "name": "firmware" },
+    { "path": "server", "name": "server" }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/.pio": true
+    }
+  }
+}
