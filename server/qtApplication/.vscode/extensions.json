@@ -1,0 +1,10 @@
+{
+    "recommendations": [
+        "theqtcompany.qt",
+        "ms-vscode.cmake-tools",
+        // IntelliSense for this folder (the C/C++ extension's IntelliSense is disabled here)
+        "llvm-vs-code-extensions.vscode-clangd",
+        // Still needed for debugging (cppdbg / cppvsdbg)
+        "ms-vscode.cpptools"
+    ]
+}

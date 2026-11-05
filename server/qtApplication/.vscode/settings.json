@@ -1,0 +1,8 @@
+{
+    "cmake.options.statusBarVisibility": "visible",
+    // Kit-independent path: kit names like "Qt 6.12.0 macos (Clang)" contain
+    // spaces/parentheses that break Qt's generated build steps.
+    "cmake.buildDirectory": "${workspaceFolder}/build/${buildType}",
+    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+    "C_Cpp.intelliSenseEngine": "disabled"
+}
