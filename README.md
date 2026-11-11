@@ -1,8 +1,15 @@
 # Development Instructions
+
+### See Everything 
+
 - Open up VSCode
 - File > Open Workspace from File > double click on the "project.code-workspace" file
 - You will see the root directory, and the specified folders on the Explorer sidebar. For example /firmware appears in both the root directory and on its own. This is so that the PlatformIO extension works without only opening the firmware folder via PlatformIO.
 - Install the recommended extensions when VS Code prompts you (PlatformIO for `firmware`; Qt, CMake Tools, clangd and C/C++ for `qtApplication`).
+
+### See what you need
+- Open up VSCode
+- FIle > Open Folder of either /firmware or /server/qtApplication
 
 ## Qt application (`server/qtApplication`)
 

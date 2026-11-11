@@ -4,19 +4,33 @@ project(qtApplication VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 6.8 REQUIRED COMPONENTS Quick)
+# find_package(Qt6 6.8 REQUIRED COMPONENTS Quick)
+find_package(Qt6 6.8 REQUIRED COMPONENTS Core Gui Widgets Quick)
 
 qt_standard_project_setup(REQUIRES 6.8)
 
 qt_add_executable(qtApplication
-    main.cpp
+    src/main.cpp
+    inc/mainWindow.hpp
+    src/mainWindow.cpp
+    inc/topBar.hpp
+    src/topBar.cpp
+    inc/sideBar.hpp
+    src/sideBar.cpp
 )
+
+target_include_directories(qtApplication PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/inc)
 
 qt_add_qml_module(qtApplication
     URI qtApplication
     VERSION 1.0
     QML_FILES
-        Main.qml
+        qml/Main.qml
+)
+
+qt_add_resources(qtApplication "assets"
+    PREFIX "/"
+    FILES assets/icons/cat.png
 )
 
 set_target_properties(qtApplication PROPERTIES
@@ -28,6 +42,9 @@ set_target_properties(qtApplication PROPERTIES
 
 target_link_libraries(qtApplication
     PRIVATE Qt6::Quick
+    Qt6::Core
+    Qt6::Gui
+    Qt6::Widgets
 )
 
 include(GNUInstallDirs)
