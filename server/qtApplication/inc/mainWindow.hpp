@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QStackedWidget>
 
 class TopBar;
 class SideBar;
@@ -13,6 +14,7 @@ public:
 private:
     TopBar* topbar;
     SideBar* sidebar;
+    QStackedWidget* stackedWidget;
 };
 
 #endif // MAINWINDOW_H

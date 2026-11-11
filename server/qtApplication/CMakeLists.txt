@@ -17,9 +17,16 @@ qt_add_executable(qtApplication
     src/topBar.cpp
     inc/sideBar.hpp
     src/sideBar.cpp
+
+    inc/pages/page.hpp
+    src/pages/mainPage.cpp
+    inc/pages/mainPage.hpp
+    src/pages/devPage.cpp
+    inc/pages/devPage.hpp
 )
 
 target_include_directories(qtApplication PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/inc)
+target_include_directories(qtApplication PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/inc/pages)
 
 qt_add_qml_module(qtApplication
     URI qtApplication

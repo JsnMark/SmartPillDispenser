@@ -5,7 +5,7 @@
 TopBar::TopBar(QWidget* parent) : QWidget(parent){
     title = new QLabel("This is the TopBar", this);
     QFont font = title->font();
-    font.setPointSize(18);
+    font.setPointSize(30);
     font.setBold(true);
     title->setFont(font);
 
@@ -13,7 +13,7 @@ TopBar::TopBar(QWidget* parent) : QWidget(parent){
     layout->addWidget(title);
     layout->addStretch(); // push to left
 
-    setFixedHeight(50);
+    setFixedHeight(60);
 }
 
 void TopBar::setTitle(const QString &new_title){

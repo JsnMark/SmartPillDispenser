@@ -7,6 +7,8 @@ class SideBar : public QWidget {
     Q_OBJECT
 public:
     explicit SideBar(QWidget* parent = nullptr);
+signals:
+    void pageSelected(int index);
 };
 
 #endif // SIDEBAR_H
