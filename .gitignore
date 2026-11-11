@@ -6,13 +6,13 @@
 **/.vscode/c_cpp_properties.json
 **/.vscode/launch.json
 # The Qt app's debug configs have no machine-specific paths; share them
-!server/qtApplication/.vscode/launch.json
+!qtApplication/.vscode/launch.json
 **/.vscode/ipch
 
 # Secrets (commit secrets.example.h instead)
 firmware/include/secrets.h
 
-# ---------- Server: Qt / CMake ----------
+# ---------- Qt / CMake ----------
 # Build output (contains absolute paths in CMakeCache.txt, compile_commands.json, etc.)
 build/
 builds/
@@ -26,7 +26,7 @@ CMakeLists.txt.user*
 
 # ---------- Per-user VS Code settings ----------
 # Generated with absolute paths; shared settings live in the root and
-# server/qtApplication .vscode/settings.json (which use ${workspaceFolder})
+# qtApplication .vscode/settings.json (which use ${workspaceFolder})
 firmware/.vscode/settings.json
 
 # ---------- Server: Python ----------

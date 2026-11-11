@@ -9,7 +9,6 @@
 SideBar::SideBar(QWidget* parent) : QWidget(parent){
     QVBoxLayout* layout = new QVBoxLayout(this);
     QButtonGroup* buttonGroup = new QButtonGroup(this);
-    buttonGroup->setExclusive(true);
 
     QToolButton* mainPageButton = new QToolButton();
     mainPageButton->setText("Main Page");

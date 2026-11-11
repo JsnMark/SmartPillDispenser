@@ -9,9 +9,9 @@
 
 ### See what you need
 - Open up VSCode
-- FIle > Open Folder of either /firmware or /server/qtApplication
+- FIle > Open Folder of either /firmware or /qtApplication
 
-## Qt application (`server/qtApplication`)
+## Qt application (`qtApplication`)
 
 ### Prerequisites
 - **Qt 6.8 or newer** with the Qt Quick module, installed via the [Qt Online Installer](https://www.qt.io/download-qt-installer). The installer also provides CMake and Ninja.
@@ -27,11 +27,11 @@
 IntelliSense for `qtApplication` comes from the **clangd** extension, not the Microsoft C/C++ extension (its IntelliSense is turned off for this folder because it can't resolve Qt's macOS framework headers). The C/C++ extension is still required for debugging.
 - **macOS:** clangd ships with the Xcode Command Line Tools; the extension finds it automatically.
 - **Windows/Linux:** when the clangd extension asks to download clangd, click **Install**.
-- clangd reads `build/Debug/compile_commands.json` (configured in `server/qtApplication/.clangd`), so configure a **Debug** build at least once.
+- clangd reads `build/Debug/compile_commands.json` (configured in `qtApplication/.clangd`), so configure a **Debug** build at least once.
 - Open C++ files through the **qtApplication** folder in the Explorer.
 
 ### Build & run
-- **Build:** F7 (or the Build button in the status bar). Output goes to `server/qtApplication/build/<BuildType>/`.
+- **Build:** F7 (or the Build button in the status bar). Output goes to `qtApplication/build/<BuildType>/`.
 - **Run:** Shift+F5, or the ▶ button in the status bar.
 - **Debug:** Run and Debug panel → "Debug Qt Application with cppdbg" (or "C++/QML" to also debug QML) → F5.
 

@@ -2,15 +2,15 @@
   "folders": [
     { "path": ".", "name": "SmartPillDispenser" },
     { "path": "firmware", "name": "firmware" },
-    { "path": "server/qtApplication", "name": "qtApplication" }
+    { "path": "qtApplication", "name": "qtApplication" }
   ],
   "settings": {
     "files.exclude": {
       "**/.pio": true
     },
-    // Only server/qtApplication is a CMake project; don't prompt for the others.
+    // Only qtApplication is a CMake project; don't prompt for the others.
     "cmake.ignoreCMakeListsMissing": true,
-    // clangd provides IntelliSense for qtApplication (see server/qtApplication/.clangd).
+    // clangd provides IntelliSense for qtApplication (see qtApplication/.clangd).
     // These must live here: clangd ignores per-folder settings in a multi-root workspace.
     // --query-driver lets clangd find MinGW's standard library headers on Windows.
     "clangd.arguments": ["--query-driver=**/g++*,**/clang++*"],
