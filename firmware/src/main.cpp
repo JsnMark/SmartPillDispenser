@@ -23,34 +23,34 @@ unsigned long lastPing = 0;
 
 
 void setup() {
-  Serial.begin(9600); 
-  pinMode(TRIG_PIN, OUTPUT); 
-  pinMode(ECHO_PIN, INPUT); 
-  stepper.setMaxSpeed(500);
-  stepper.setAcceleration(200);
+    Serial.begin(9600); 
+    pinMode(TRIG_PIN, OUTPUT); 
+    pinMode(ECHO_PIN, INPUT); 
+    stepper.setMaxSpeed(500);
+    stepper.setAcceleration(200);
 }
 
 void loop() {
-  if(millis() - lastPing >= 500){
-    lastPing = millis();
-    // Clear the TRIG_PIN by setting it LOW for 2 microseconds
-    digitalWrite(TRIG_PIN, LOW); delayMicroseconds(2);
-    // Trigger the sensor by setting the TRIG_PIN HIGH for 10 microseconds
-    digitalWrite(TRIG_PIN, HIGH); delayMicroseconds(10);
-    digitalWrite(TRIG_PIN, LOW);
-    // Read the ECHO_PIN, returns the sound wave travel time in microseconds
-    duration = pulseIn(ECHO_PIN, HIGH, 30000); // 30ms timeout
-    // Calculate the distance
-    distanceCm = duration * SOUND_SPEED / 2; // 0 means no echo
-    
-    // Print the distance to the Serial Monitor
-    Serial.print("Distance (cm): ");
-    Serial.println(distanceCm);
-  }
-    
-  if (stepper.distanceToGo() == 0){
-    stepper.moveTo(stepper.currentPosition() == 0 ? 2048: 0); // 2048 steps is ~ 1 turn
-  }
-  stepper.run();
+    if(millis() - lastPing >= 500){
+        lastPing = millis();
+        // Clear the TRIG_PIN by setting it LOW for 2 microseconds
+        digitalWrite(TRIG_PIN, LOW); delayMicroseconds(2);
+        // Trigger the sensor by setting the TRIG_PIN HIGH for 10 microseconds
+        digitalWrite(TRIG_PIN, HIGH); delayMicroseconds(10);
+        digitalWrite(TRIG_PIN, LOW);
+        // Read the ECHO_PIN, returns the sound wave travel time in microseconds
+        duration = pulseIn(ECHO_PIN, HIGH, 30000); // 30ms timeout
+        // Calculate the distance
+        distanceCm = duration * SOUND_SPEED / 2; // 0 means no echo
+        
+        // Print the distance to the Serial Monitor
+        Serial.print("Distance (cm): ");
+        Serial.println(distanceCm);
+    }
+        
+    if (stepper.distanceToGo() == 0){
+        stepper.moveTo(stepper.currentPosition() == 0 ? 2048: 0); // 2048 steps is ~ 1 turn
+    }
+    stepper.run();
 }
 
