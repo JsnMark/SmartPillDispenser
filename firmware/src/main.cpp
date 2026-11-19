@@ -1,12 +1,16 @@
 #include <Arduino.h>
 #include <AccelStepper.h>
 #include <WiFi.h>
+#include <WiFiClientSecure.h>
+#include <PubSubClient.h>
 #include "secrets.h"
 #include "ultrasonic.h"
 
 WiFiClient client;
+/* 
 const char* SERVER_IP = "172.20.10.5"; // destination IP here
 const uint16_t SERVER_PORT = 5050;     // destination Port here
+*/
 
 const int TRIG_PIN = 12;
 const int ECHO_PIN = 14;
@@ -17,9 +21,26 @@ const int IN3_PIN = 25;
 const int IN4_PIN = 33;
 AccelStepper stepper(AccelStepper::FULL4WIRE, IN1_PIN,IN3_PIN,IN2_PIN,IN4_PIN);
 
+#define TEAM_ID "T18"
+
+constexpr uint16_t MQTT_PORT        = 8883; 
+constexpr uint16_t MQTT_KEEPALIVE_S = 15;      
+constexpr uint32_t WIFI_RETRY_MS    = 20000;   
+constexpr uint32_t BACKOFF_START_MS = 1000;    
+constexpr uint32_t BACKOFF_MAX_MS   = 30000;   
+
+const char* MQTT_TOPIC = "iot/T18/telemetry";
+
+unsigned long lastMqttAttempt = 0;
+const unsigned long MQTT_RETRY_MS = 5000;
+
+uint32_t seqNo = 0;
+WiFiClientSecure net;
+PubSubClient mqtt(net);
 
 // Define sound speed in cm/microsecond
 #define SOUND_SPEED 0.034
+
 
 
 long duration;
@@ -34,6 +55,83 @@ bool payload_ready_flag = false;
 
 unsigned long lastPing = 0;
 unsigned long current = 0;
+
+void initMqtt(){
+    net.setInsecure(); // Disable certificate verification for testing purposes
+
+    mqtt.setServer(MQTT_HOST, MQTT_PORT);
+    mqtt.setKeepAlive(MQTT_KEEPALIVE_S);
+    mqtt.setSocketTimeout(5);
+    mqtt.setBufferSize(512);
+}
+
+bool connectMqtt() {
+    if (WiFi.status() != WL_CONNECTED) {
+        return false;
+    }
+
+    String clientId = "ultrasonic-T18-" +
+                      String((uint32_t)ESP.getEfuseMac(), HEX);
+
+    Serial.println("Connecting to MQTT broker...");
+
+    if (mqtt.connect(
+        clientId.c_str(),
+        MQTT_USER,
+        MQTT_PASS
+    )) {
+        Serial.println("MQTT connected!");
+        return true;
+    }
+
+    Serial.print("MQTT connection failed, state: ");
+    Serial.println(mqtt.state());
+
+    return false;
+}
+
+void handleMqtt() {
+    if (WiFi.status() != WL_CONNECTED) {
+        return;
+    }
+
+    if (!mqtt.connected()) {
+        if (millis() - lastMqttAttempt >= MQTT_RETRY_MS) {
+            lastMqttAttempt = millis();
+            connectMqtt();
+        }
+        return;
+    }
+
+    mqtt.loop();
+}
+
+//bugfix code. comment out later
+void testBrokerConnection() {
+    Serial.println("\n--- MQTT Connection Test ---");
+
+    IPAddress brokerIP;
+
+    if (WiFi.hostByName(MQTT_HOST, brokerIP)) {
+        Serial.print("Broker IP: ");
+        Serial.println(brokerIP);
+    } else {
+        Serial.println("ERROR: DNS lookup failed");
+        return;
+    }
+
+    WiFiClient testClient;
+
+    if (testClient.connect(MQTT_HOST, MQTT_PORT, 3000)) {
+        Serial.println("TCP connection SUCCESS");
+    } else {
+        Serial.println("TCP connection FAILED");
+    }
+
+    testClient.stop();
+
+    Serial.printf("Free heap: %u bytes\n", ESP.getFreeHeap());
+}
 
 void initUltrasonic(){
     pinMode(TRIG_PIN, OUTPUT); 
@@ -73,6 +171,42 @@ void setup() {
     initUltrasonic();
     initStepper();
     initWifi();
+    testBrokerConnection();
+    initMqtt();
+}
+
+bool publishUltrasonicReading(float distanceCm, bool validEcho) {
+    if (!mqtt.connected()) {
+        return false;
+    }
+
+    char payload[128];
+
+    if (validEcho) {
+        snprintf(payload, sizeof(payload),
+            "{\"seq\":%lu,\"distance_cm\":%.2f,\"uptime_ms\":%lu}",
+            (unsigned long)++seqNo,
+            distanceCm,
+            millis()
+        );
+    } else {
+        snprintf(payload, sizeof(payload),
+            "{\"seq\":%lu,\"distance_cm\":null,\"uptime_ms\":%lu}",
+            (unsigned long)++seqNo,
+            millis()
+        );
+    }
+
+    bool success = mqtt.publish(MQTT_TOPIC, payload, false);
+
+    if (success) {
+        Serial.print("MQTT published: ");
+        Serial.println(payload);
+    } else {
+        Serial.println("MQTT publish failed");
+    }
+
+    return success;
 }
 
 void handleUltraSonicSensor(){
@@ -91,6 +225,9 @@ void handleUltraSonicSensor(){
         distanceCm = duration * SOUND_SPEED / 2; // 0 means no echo
         Serial.print("Distance (cm): ");
         Serial.println(distanceCm);
+
+        //should send reading to mqtt
+        publishUltrasonicReading(distanceCm, duration != 0);
 
         // add data to current payload
         float* distances = current_payload->distances;
@@ -117,6 +254,7 @@ void handleUltraSonicSensor(){
 #define CONNECT_TIMEOUT_MS 500
 unsigned long lastConnectAttempt = 0;
 
+/*
 void handleWifi(){
     if(!payload_ready_flag) return;
     if(!client.connected()){
@@ -141,6 +279,7 @@ void handleWifi(){
     Serial.printf("Sent %u bytes\n", sent);
     payload_ready_flag = false;
 }
+*/
 
 void handleStepperMotor(){
     if (stepper.distanceToGo() == 0){
@@ -151,8 +290,9 @@ void handleStepperMotor(){
 
 void loop() {
     current = millis();
+    handleMqtt();
     handleUltraSonicSensor();
-    handleWifi();
+    //handleWifi(); deprecated, using MQTT instead
     // handleStepperMotor();
 }
 
